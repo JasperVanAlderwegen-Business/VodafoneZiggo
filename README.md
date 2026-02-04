@@ -57,12 +57,13 @@ Postman: Open the Postman application and import [Postman-OrdersAPI.json](Postma
 
 1. While it was not directly specified, the api also provides a way to delete an order as well as update the user for a
    specific order. This was done to provide a more complete implementation of the api.
-2. Since I only started at iO on Monday, I did not have a set up laptop yet. Because of this, I had to combine the
-   setup of my new MacBook with the implementation of this assignment. While the implementation is feature complete, I
-   have not had time implement a ful set of units test for all functionality. This is not an oversight. In a real world
-   scenario, everything would be covered by unit tests and integration tests.
-3. Most JavaDoc comments were generated using IntelliJ’s AI Assistant. This approach saves time while providing a clear
+2. Note that the api tests have been added to the Postman collection. Normally I would also add junit tests covering the
+   java side of the implementation, but with the combination of having to set up my entire development environment,
+   while also simultaneously working on the assignment, I have run short on time.
+3. The same counts for pagination for the GET endpoint of the orders. I would have made the endpoint use Pageable, but
+   since everything works now and I don't want to risk breaking things again, I have left this out.
+4. Most JavaDoc comments were generated using IntelliJ’s AI Assistant. This approach saves time while providing a clear
    and consistent level of documentation quality.
-4. The Reqres.in api does not have any way of retrieving a single user by e-mail. For that reason, when retrieving a
+5. The Reqres.in api does not have any way of retrieving a single user by e-mail. For that reason, when retrieving a
    user, I had to run through all users using the pagination. This is not ideal, but it is the only way to retrieve a
    user by e-mail. In a real world scenario, it would be nice to have a more robust api to call.
