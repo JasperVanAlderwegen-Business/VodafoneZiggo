@@ -94,8 +94,8 @@ public class OrderService {
      * Updates an existing order by changing its owner (email) and associated user details.
      * The new email must exist in the external user system.
      *
-     * @param orderID  the unique identifier of the order to update
-     * @param newEmail the new customer email address
+     * @param orderID            the unique identifier of the order to update
+     * @param updateOrderRequest object containing the new customer email address
      * @return the updated {@link Order} object
      * @throws ResponseStatusException if the order is not found, the new email doesn't exist in reqres.in,
      *                                 or if transferring to the new email would create a duplicate
