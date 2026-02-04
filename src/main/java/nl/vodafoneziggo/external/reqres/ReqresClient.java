@@ -55,6 +55,7 @@ public class ReqresClient {
      */
     public Optional<ReqresUser> findUserByEmail(String email) {
         int page = 1;
+        // Just keep iterating until we reach the final page. In that case an empty Optional will be returned and the loop will end.
         while (true) {
             ReqresUsersResponse response = fetchPage(page);
             if (response != null && response.getData() != null) {
