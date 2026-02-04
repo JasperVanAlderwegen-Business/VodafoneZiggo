@@ -11,6 +11,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+/**
+ * Component for interacting with the Reqres API. This client provides methods
+ * for querying user information from the Reqres API.
+ */
 @Component
 public class ReqresClient {
     @Getter
@@ -39,6 +43,15 @@ public class ReqresClient {
         this.apiKey = apiKey;
     }
 
+    /**
+     * Searches for a user by their email address in the Reqres API.
+     * The search iterates through all available pages until a matching user is found
+     * or there are no more pages to search.
+     *
+     * @param email the email address of the user to search for
+     * @return an {@code Optional} containing the {@code ReqresUser} if found;
+     * otherwise, an empty {@code Optional} if the user is not found
+     */
     public Optional<ReqresUser> findUserByEmail(String email) {
         int page = 1;
 
