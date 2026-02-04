@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "order",
+@Table(name = "orders",
         indexes = {
                 @Index(name = "idx_order_email_product_id", columnList = "email,productID")
         })

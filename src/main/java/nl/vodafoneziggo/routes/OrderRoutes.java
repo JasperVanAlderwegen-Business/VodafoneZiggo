@@ -13,5 +13,6 @@ public class OrderRoutes extends RouteBuilder {
     @Override
     public void configure() {
         from("direct:createOrder").bean(orderService, "createOrder");
+        from("direct:listOrders").bean(orderService, "listOrders");
     }
 }

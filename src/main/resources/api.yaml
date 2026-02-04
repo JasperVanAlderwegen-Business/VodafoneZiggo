@@ -42,7 +42,7 @@ paths:
               examples:
                 default:
                   value:
-                    orderID: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                    orderID: "1234"
         "400":
           $ref: "#/components/responses/BadRequest"
         "409":
@@ -52,14 +52,14 @@ paths:
 
     get:
       tags: [ Orders ]
-      summary: Retrieve all orders filtered by email
-      description: Returns all stored orders for the given email.
+      summary: Retrieve all orders (optionally filtered by email)
+      description: Returns all stored orders. If email is provided, results are filtered by that email.
       operationId: listOrders
       parameters:
         - name: email
           in: query
-          required: true
-          description: Customer email used to filter orders.
+          required: false
+          description: Optional customer email used to filter orders.
           schema:
             type: string
             format: email
