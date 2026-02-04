@@ -6,6 +6,7 @@ import nl.vodafoneziggo.orders.api.OrdersApiDelegate;
 import nl.vodafoneziggo.orders.model.CreateOrderRequest;
 import nl.vodafoneziggo.orders.model.CreateOrderResponse;
 import nl.vodafoneziggo.orders.model.Order;
+import nl.vodafoneziggo.orders.model.UpdateOrderRequest;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -48,5 +49,39 @@ public class OrdersApiDelegateImpl implements OrdersApiDelegate {
         List<Order> orders = producerTemplate.requestBody("direct:listOrders", email, List.class);
         log.info("Retrieved {} orders for email {}", orders.size(), email);
         return ResponseEntity.ok(orders);
+    }
+
+    /**
+     * Deletes an order identified by the provided order ID.
+     *
+     * @param orderID the unique identifier of the order to be deleted
+     * @return a {@code ResponseEntity<Void>} with HTTP status 204 if the deletion is successful
+     */
+    @Override
+    public ResponseEntity<Void> deleteOrder(Integer orderID) {
+        producerTemplate.sendBody("direct:deleteOrder", orderID);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Updates an existing order identified by the provided order ID with the new details specified in the update request.
+     *
+     * @param orderID            the unique identifier of the order to be updated
+     * @param updateOrderRequest the request object containing the updated order details, such as email
+     * @return a {@code ResponseEntity} containing the updated {@code Order} object
+     */
+    @Override
+    public ResponseEntity<Order> updateOrder(Integer orderID, UpdateOrderRequest updateOrderRequest) {
+        String email = (updateOrderRequest != null) ? updateOrderRequest.getEmail() : null;
+        log.debug("Updating order {} with new email {}", orderID, email);
+
+        Order updatedOrder = producerTemplate.requestBodyAndHeader(
+                "direct:updateOrder",
+                updateOrderRequest,
+                "orderID",
+                orderID,
+                Order.class
+        );
+        return ResponseEntity.ok(updatedOrder);
     }
 }

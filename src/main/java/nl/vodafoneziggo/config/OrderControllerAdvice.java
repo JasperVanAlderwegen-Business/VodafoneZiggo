@@ -93,24 +93,28 @@ public class OrderControllerAdvice {
     }
 
     /**
-     * Handles generic exceptions that occur during the execution of the application.
-     * Logs the exception details and returns a {@link ResponseEntity} with an error message
-     * and a {@link HttpStatus#BAD_REQUEST} status.
+     * Handles generic exceptions of type {@link Exception} and constructs a standardized error response.
+     * Logs the exception details and returns a {@link ResponseEntity} with a standardized error payload.
      *
-     * @param ex the exception instance of {@link Exception} that needs to be handled
-     * @return a {@link ResponseEntity} containing the exception's message as its body,
-     * with a {@link HttpStatus#BAD_REQUEST} status
+     * @param ex the exception instance of {@link Exception} that was thrown during execution
+     * @return a {@link ResponseEntity} containing an {@link ErrorResponse} object with a generic error code,
+     * a message indicating an internal error, and the exception message as part of the details.
+     * The HTTP status is set to {@link HttpStatus#BAD_REQUEST}.
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception ex) {
-        // This is a catch-all for all other exceptions that are not handled.
-        log.error("An unspecified exception was thrown somewhere in the code.", ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        log.error("An unspecified exception was thrown", ex);
+        ErrorResponse error = new ErrorResponse();
+        error.setCode("INTERNAL_ERROR");
+        error.setMessage("An error occurred");
+        error.setDetails(List.of(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     private String codeForStatus(int status) {
         return switch (status) {
             case 400 -> "VALIDATION_ERROR";
+            case 404 -> "ORDER_NOT_FOUND";
             case 409 -> "DUPLICATE_ORDER";
             case 502 -> "EXTERNAL_SERVICE_ERROR";
             default -> "ERROR";

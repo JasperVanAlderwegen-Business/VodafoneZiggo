@@ -76,6 +76,61 @@ paths:
         "502":
           $ref: "#/components/responses/BadGateway"
 
+  /api/orders/{orderID}:
+    delete:
+      tags: [ Orders ]
+      summary: Delete an order
+      description: Deletes a specific order by ID.
+      operationId: deleteOrder
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: Order identifier
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "204":
+          description: No Content - Order deleted successfully
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags: [ Orders ]
+      summary: Update order owner
+      description: Transfers an order to a new user by updating the email and associated user details (first_name, last_name).
+      operationId: updateOrder
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: Order identifier
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderRequest"
+            examples:
+              default:
+                value:
+                  email: "janet.weaver@reqres.in"
+      responses:
+        "200":
+          description: OK - Order updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
   responses:
     BadRequest:
@@ -117,7 +172,19 @@ components:
                 message: "Failed to validate email against external service"
                 details:
                   - "reqres.in unavailable or returned unexpected response"
-
+    NotFound:
+      description: Order not found or does not belong to the specified email.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            notFound:
+              value:
+                code: "NOT_FOUND"
+                message: "Order not found"
+                details:
+                  - "Order with ID 999 does not exist or does not belong to this user"
   schemas:
     CreateOrderRequest:
       type: object
@@ -134,6 +201,17 @@ components:
           format: email
           description: Customer email address that must exist in reqres.in users.
           example: "abc@def.com"
+
+    UpdateOrderRequest:
+      type: object
+      additionalProperties: false
+      required: [ email ]
+      properties:
+        email:
+          type: string
+          format: email
+          description: New customer email that must exist in reqres.in users.
+          example: "janet.weaver@reqres.in"
 
     CreateOrderResponse:
       type: object

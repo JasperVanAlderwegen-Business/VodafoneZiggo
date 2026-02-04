@@ -1,6 +1,7 @@
 package nl.vodafoneziggo.external.reqres;
 
 import lombok.Getter;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -54,25 +55,21 @@ public class ReqresClient {
      */
     public Optional<ReqresUser> findUserByEmail(String email) {
         int page = 1;
-
         while (true) {
             ReqresUsersResponse response = fetchPage(page);
-
             if (response != null && response.getData() != null) {
                 Optional<ReqresUser> found = response.getData().stream()
-                        .filter(u -> email.equalsIgnoreCase(u.getEmail()))
+                        .filter(u -> !Strings.isBlank(email) && email.equalsIgnoreCase(u.getEmail()))
                         .findFirst();
 
                 if (found.isPresent()) {
                     return found;
                 }
             }
-
             Integer totalPages = response != null ? response.getTotalPages() : null;
             if (totalPages == null || page >= totalPages) {
                 return Optional.empty();
             }
-
             page++;
         }
     }
@@ -81,7 +78,6 @@ public class ReqresClient {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("x-api-key", apiKey); // set to your key via config
-
             HttpEntity<Void> entity = new HttpEntity<>(headers);
             ResponseEntity<ReqresUsersResponse> response = restTemplate.exchange(
                     BASE_URL + "?page={page}",
@@ -90,7 +86,6 @@ public class ReqresClient {
                     ReqresUsersResponse.class,
                     page
             );
-
             return response.getBody();
         } catch (RestClientException ex) {
             throw new ResponseStatusException(

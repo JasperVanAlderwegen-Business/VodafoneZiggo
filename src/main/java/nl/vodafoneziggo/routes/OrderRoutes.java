@@ -30,5 +30,7 @@ public class OrderRoutes extends RouteBuilder {
     public void configure() {
         from("direct:createOrder").bean(orderService, "createOrder");
         from("direct:listOrders").bean(orderService, "listOrders");
+        from("direct:deleteOrder").bean(orderService, "deleteOrder");
+        from("direct:updateOrder").bean(orderService, "updateOrder");
     }
 }
