@@ -57,9 +57,9 @@ Postman: Open the Postman application and import [Postman-OrdersAPI.json](Postma
 
 1. While it was not directly specified, the api also provides a way to delete an order as well as update the user for a
    specific order. This was done to provide a more complete implementation of the api.
-2. Since I only started at iO on Monday, I did not have a set up laptop yet. Because of this, I had to combine the setup
-   of my new MacBook with the implementation of this assignment. While the implementation is feature complete, I have
-   not had time implement a ful set of units test for all functionality. This is not an oversight. In a real world
+2. Since I only started at iO on Monday, I did not have a set up laptop yet. Because of this, I had to combine the
+   setup of my new MacBook with the implementation of this assignment. While the implementation is feature complete, I
+   have not had time implement a ful set of units test for all functionality. This is not an oversight. In a real world
    scenario, everything would be covered by unit tests and integration tests.
 3. Most JavaDoc comments were generated using IntelliJ’s AI Assistant. This approach saves time while providing a clear
    and consistent level of documentation quality.
