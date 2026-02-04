@@ -1,0 +1,189 @@
+openapi: 3.0.3
+info:
+  title: Orders API
+  version: 1.0.0
+  description: Contract-first microservice for creating and listing orders.
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Orders
+    description: Order operations
+
+paths:
+  /api/orders:
+    post:
+      tags: [ Orders ]
+      summary: Create an order
+      description: |
+        Creates an order for a given productID and email.
+        The service validates that the email exists in https://reqres.in/api/users and that the same customer
+        has not already ordered the same product.
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+            examples:
+              default:
+                value:
+                  productID: "1234"
+                  email: "abc@def.com"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOrderResponse"
+              examples:
+                default:
+                  value:
+                    orderID: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+
+    get:
+      tags: [ Orders ]
+      summary: Retrieve all orders filtered by email
+      description: Returns all stored orders for the given email.
+      operationId: listOrders
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: Customer email used to filter orders.
+          schema:
+            type: string
+            format: email
+          example: "abc@def.com"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+
+components:
+  responses:
+    BadRequest:
+      description: Request validation failed (e.g., invalid email, missing fields).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            invalidEmail:
+              value:
+                code: "VALIDATION_ERROR"
+                message: "Invalid request"
+                details:
+                  - "email must be a well-formed email address"
+    Conflict:
+      description: The customer already ordered the same product.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            duplicate:
+              value:
+                code: "DUPLICATE_ORDER"
+                message: "Customer has already ordered this product"
+                details:
+                  - "email=abc@def.com productID=1234"
+    BadGateway:
+      description: External dependency failure (e.g., reqres.in not reachable).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            reqresDown:
+              value:
+                code: "EXTERNAL_SERVICE_ERROR"
+                message: "Failed to validate email against external service"
+                details:
+                  - "reqres.in unavailable or returned unexpected response"
+
+  schemas:
+    CreateOrderRequest:
+      type: object
+      additionalProperties: false
+      required: [ productID, email ]
+      properties:
+        productID:
+          type: integer
+          minLength: 1
+          description: Product identifier.
+          example: "1234"
+        email:
+          type: string
+          format: email
+          description: Customer email address that must exist in reqres.in users.
+          example: "abc@def.com"
+
+    CreateOrderResponse:
+      type: object
+      additionalProperties: false
+      required: [ orderID ]
+      properties:
+        orderID:
+          type: integer
+          description: Generated order identifier.
+          example: "123"
+
+    Order:
+      type: object
+      additionalProperties: false
+      required: [ orderID, email, first_name, last_name, productID ]
+      properties:
+        orderID:
+          type: string
+          description: Order identifier.
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+        productID:
+          type: string
+          minLength: 1
+
+    OrderListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Order"
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [ code, message ]
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+        message:
+          type: string
+          description: Human-readable error message.
+        details:
+          type: array
+          description: Optional list of details to help debugging/clients.
+          items:
+            type: string
