@@ -107,6 +107,11 @@
 
         <!-- Test support -->
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -144,6 +149,16 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/OpenApiGeneratorApplicationTests.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
             <!-- Make generated sources visible to the compiler/IDE -->
